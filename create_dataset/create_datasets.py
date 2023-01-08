@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 
 # loading the datasets
-product = pd.read_csv("create_dataset/Products/things.csv", names=["product"])
-pro_clothes = pd.read_csv("create_dataset/Products/clothes.csv", names=["product"])
-pro_flowers = pd.read_csv("create_dataset/Products/flowers.csv", names=["product"])
-pro_instru = pd.read_csv("create_dataset/Products/instruments.csv", names=['product'])
+product = pd.read_csv("create_dataset/Products/things.csv", names=["name"])
+pro_clothes = pd.read_csv("create_dataset/Products/clothes.csv", names=["name"])
+pro_flowers = pd.read_csv("create_dataset/Products/flowers.csv", names=["name"])
+pro_instru = pd.read_csv("create_dataset/Products/instruments.csv", names=['name'])
 
 # preprocess the clothes data 
 pro_clothes["product"] = pro_clothes["product"].apply(lambda x: str(x).strip())
@@ -47,3 +47,23 @@ product = product[['product_id', 'category', 'product']]
 
 # save the data
 product.to_csv('data/product_list.csv', index=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
