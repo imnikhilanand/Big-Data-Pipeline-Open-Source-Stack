@@ -30,6 +30,7 @@ while(True):
     update_sql="UPDATE orders SET status='1' WHERE order_id='%s';"
     mycursor.execute(update_sql,update_val)
     mydb.commit()
-  time.sleep(5)
+    time.sleep(5)
+  time.sleep(3600)
 
 
