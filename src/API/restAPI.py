@@ -1,6 +1,9 @@
-from flask import Flask, request
+from flask import Flask, jsonify
+import time
 import subprocess
 import mysql.connector
+import random
+import numpy
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -13,14 +16,14 @@ mycursor.execute("use eCommerce;")
 app = Flask(__name__)
 
 # generate some integers
-in_memory_datastore=[]
-for i in range(1,10001):
-    in_memory_datastore.append(i)
+# in_memory_datastore=[]
+# for i in range(1,10001):
+#     in_memory_datastore.append(i)
 
     
 @app.get('/')
-def home():
-   return in_memory_datastore
+# def home():
+#    return in_memory_datastore
    
 @app.route('/createorders', methods=['GET','POST'])
 def run_script():
@@ -36,20 +39,23 @@ def updateorders():
 
 @app.get('/vieworders')
 def vieworders():
-    sql="SELECT order_id, user_id, product_id FROM orders WHERE status='0';"
-    mycursor.execute(sql)
+    uid = random.randint(1, 10000)
+    sql="SELECT order_id, user_id, product_id FROM orders WHERE status='0' and user_id='%s';"
+    val=(uid,)
+    mycursor.execute(sql,val)
     result=mycursor.fetchall()
     return result
 
 @app.get('/viewproducts')
 def viewproducts():
-    sql="SELECT * FROM products ;"
+    sql="SELECT product_id FROM products ORDER BY RAND() LIMIT 1;"
     mycursor.execute(sql)
     result=mycursor.fetchall()
-    return result
+    return [random.randint(1, 10000), result[0][0]]
 
 if __name__ == '__main__':
   app.run()
+
    
 
 
