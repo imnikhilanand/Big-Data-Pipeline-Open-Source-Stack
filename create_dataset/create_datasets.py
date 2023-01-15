@@ -51,19 +51,3 @@ product.to_csv('data/product_list.csv', index=False)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
