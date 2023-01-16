@@ -10,19 +10,32 @@ This project demonstrates a scalebale big data pipeline developed using open sou
 - Run MySQL on terminal using the command "mysql -u <username> -p". When prompted, enter the password.
 - Create a database named "eCommerce". 
 - In eCommerce database create tables: 
-    - user(id, name, address) 
-    - products(product_id, category, name)
-    - create table orders (
-        order_id int(255) not null primary key auto_increment, 
-        user_id int(255) not null, 
-        product_id int(255) not null, 
-        orderedAt timestamp default current_timestamp(), 
-        status enum('0','1') default '0', 
-        foreign key (user_id) references user(id), 
-        foreign key (product_id) references products(product_id)
-      );
+    
+    ```
+    CREATE TABLE user(
+        id INT(255) NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+        name VARCHAR(255) NOT NULL,  
+        address VARCHAR(255)
+    ); 
+    
+    CREATE TABLE products(
+        product_id INT(255) NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+        category VARCHAR(255) NOT NULL, 
+        name VARCHAR(255)
+    );
+    
+    CREATE TABLE orders(
+        order_id int(255) NOT NULL PRIMARY KEY AUTO_INCREMENT, 
+        user_id int(255) NOT NULL, 
+        product_id int(255) NOT NULL, 
+        orderedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP(), 
+        status ENUM('0','1') DEFAULT '0', 
+        FOREIGN KEY (user_id) REFERENCES user(id), 
+        FOREIGN KEY (product_id) REFERENCES products(product_id)
+    );
+    ```
 
-# Streaming Data
+## Streaming Data
 
 ### Kafka topics for producting Streaming data:
 
