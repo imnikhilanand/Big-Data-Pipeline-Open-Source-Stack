@@ -17,7 +17,7 @@ while(True):
   sql='''SELECT order_id 
          FROM orders 
          WHERE status='0' AND  
-         TIMESTAMPDIFF(SECOND, orderedAt, CURRENT_TIMESTAMP)>18 AND 
+         TIMESTAMPDIFF(SECOND, orderedAt, CURRENT_TIMESTAMP)>1800 AND 
          TIMESTAMPDIFF(SECOND, orderedAt, CURRENT_TIMESTAMP)<3600 ;
       ''' 
   mycursor.execute(sql)
@@ -38,7 +38,5 @@ while(True):
     time.sleep(5)
   
 mycursor.close()
-      
-  #time.sleep(36)
 
 
