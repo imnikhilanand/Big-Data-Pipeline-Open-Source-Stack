@@ -45,9 +45,10 @@ This project demonstrates a scalebale big data pipeline developed using open sou
     bin/kafka-topics.sh --create --topic orderview --bootstrap-server localhost:9092 --replication-factor 1 --partitions 4	
 ```
 
-# Batch Data
+## Batch Data
 
 ### Setup Airbyte
 
 
+## Dashboard
 

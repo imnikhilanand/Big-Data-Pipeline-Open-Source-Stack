@@ -32,11 +32,10 @@ def updateorders():
 
 @app.get('/vieworders')
 def vieworders():
-    uid = random.randint(1, 10000)
-    sql="SELECT order_id, CURRENT_TIMESTAMP() FROM orders WHERE status='0' and user_id='%s';"
-    mycursor.execute(sql, (uid,))
+    sql="SELECT user_id,order_id FROM orders WHERE status='0' ORDER BY RAND() LIMIT 1;"
+    mycursor.execute(sql)
     result=mycursor.fetchall()
-    return result
+    return [result[0][0], result[0][1]]
 
 @app.get('/viewproducts')
 def viewproducts():
@@ -48,8 +47,10 @@ def viewproducts():
 if __name__ == '__main__':
   app.run()
 
+# host="localhost", port=8000, debug=True
 
    
+
 
 
 

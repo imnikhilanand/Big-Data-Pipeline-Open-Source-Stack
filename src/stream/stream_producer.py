@@ -35,8 +35,11 @@ def product_view():
     except Exception as e:
         print("Producer not working: ",e)
 
+i = 0
 # running the APIs
 while(True):
     product_view()
-    order_view()
+    if i%3 == 0:
+        order_view()
+    i+=1
     time.sleep(5)
