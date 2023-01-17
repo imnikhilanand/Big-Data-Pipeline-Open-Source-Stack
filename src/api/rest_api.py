@@ -22,14 +22,14 @@ app = Flask(__name__)
 # Defining route to create random orders
 @app.route('/createorders', methods=['GET','POST'])
 def run_script():
-  script_path = r'src/API/create_orders.py'
+  script_path = r'src/API/create_order.py'
   subprocess.call(['python3', script_path])
   return 'Orders Created'
 
 # Defining route to update random orders
 @app.route('/updateorders', methods=['GET','POST'])
 def updateorders():
-  script_path = r'src/API/update_status.py'
+  script_path = r'src/API/update_order.py'
   subprocess.call(['python3', script_path])
   return 'Orders Updated'
 

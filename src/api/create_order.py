@@ -25,7 +25,7 @@ while(True):
   mydb.commit()
   # mandatory to run this
   mycursor.close()
-  #time.sleep(5)
+  time.sleep(5)
 
 
 
