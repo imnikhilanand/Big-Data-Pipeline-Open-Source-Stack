@@ -17,19 +17,23 @@ mycursor.execute("use eCommerce;")
 
 # flask app
 app = Flask(__name__)
-       
+
+
+# Defining route to create random orders
 @app.route('/createorders', methods=['GET','POST'])
 def run_script():
   script_path = r'src/API/create_orders.py'
   subprocess.call(['python3', script_path])
   return 'Orders Created'
 
+# Defining route to update random orders
 @app.route('/updateorders', methods=['GET','POST'])
 def updateorders():
-  script_path = r'update_status.py'
+  script_path = r'src/API/update_status.py'
   subprocess.call(['python3', script_path])
   return 'Orders Updated'
 
+# Defining route to view random orders which are uncomplete(status=0)
 @app.get('/vieworders')
 def vieworders():
     sql="SELECT user_id,order_id FROM orders WHERE status='0' ORDER BY RAND() LIMIT 1;"
@@ -37,6 +41,7 @@ def vieworders():
     result=mycursor.fetchall()
     return [result[0][0], result[0][1]]
 
+# Defining route to view random products
 @app.get('/viewproducts')
 def viewproducts():
     sql="SELECT product_id FROM products ORDER BY RAND() LIMIT 1;"
