@@ -33,6 +33,16 @@ This project demonstrates a scalebale big data pipeline developed using open sou
         FOREIGN KEY (user_id) REFERENCES user(id), 
         FOREIGN KEY (product_id) REFERENCES products(product_id)
     );
+
+    CREATE TABLE completed_orders(
+        order_id int(255) NOT NULL PRIMARY KEY, 
+        user_id int(255) NOT NULL, 
+        product_id int(255) NOT NULL, 
+        orderedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP(), 
+        status ENUM('0','1') DEFAULT '0', 
+        FOREIGN KEY (user_id) REFERENCES user(id), 
+        FOREIGN KEY (product_id) REFERENCES products(product_id)
+    );
     ```
 
 ## Streaming Data

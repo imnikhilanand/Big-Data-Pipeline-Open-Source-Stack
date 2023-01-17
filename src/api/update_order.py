@@ -14,28 +14,31 @@ mydb = mysql.connector.connect(
 while(True):
   mycursor = mydb.cursor(buffered=True)
   mycursor.execute("use eCommerce;")
-  sql='''SELECT order_id 
+  sql='''SELECT *
          FROM orders 
          WHERE status='0' AND  
          TIMESTAMPDIFF(SECOND, orderedAt, CURRENT_TIMESTAMP)>1800 AND 
-         TIMESTAMPDIFF(SECOND, orderedAt, CURRENT_TIMESTAMP)<3600 ;
+         TIMESTAMPDIFF(SECOND, orderedAt, CURRENT_TIMESTAMP)<3600  ;
       ''' 
+
+      
   mycursor.execute(sql)
   myresult = mycursor.fetchall()
-  print(myresult)
-  oid=[]
-  for x in myresult:
-    oid.append(x[0])
-  while len(oid)>0:
-    update_val=(random.choice(oid),)
-    # Find the index of the element with the specified value
-    index_arr = oid.index(update_val[0])
-    # Delete the element at the specified index
-    del oid[index_arr]
-    update_sql="UPDATE orders SET status='1' WHERE order_id='%s';"
-    mycursor.execute(update_sql,update_val)
+  i=len(myresult)
+  print(i)
+  print(myresult[i-1])
+
+  while i>0:
+    myresult=[list(ele) for ele in myresult]
+    myresult[i-1][4]='1'
+    myresult=[tuple(ele) for ele in myresult]
+    print(myresult[i-1])
+    update_sql="INSERT into completed_orders values(%s,%s,%s,%s,%s) ;"
+    mycursor.execute(update_sql,myresult[i-1])
     mydb.commit()
-    time.sleep(300)
+    i-=1
+    time.sleep(5)
+  time.sleep(300)
   
 mycursor.close()
 
