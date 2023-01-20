@@ -13,19 +13,18 @@ mydb = mysql.connector.connect(
 )
 
 # loop to iterate and generate random orders at some interval 
-while(True):
-  uid = random.randint(1, 10000)
-  pid = random.randint(1, 304)
-  val=(uid,pid)
-  mycursor = mydb.cursor(buffered=True)
-  mycursor.execute("use eCommerce;")
-  # pusing to the database
-  sql="INSERT INTO orders(user_id,product_id, orderedAt) VALUES(%s,%s, CURRENT_TIMESTAMP);"
-  mycursor.execute(sql,val)
-  mydb.commit()
-  # mandatory to run this
-  mycursor.close()
-  time.sleep(5)
-
+#while(True):
+uid = random.randint(1, 10000)
+pid = random.randint(1, 304)
+val=(uid,pid)
+mycursor = mydb.cursor(buffered=True)
+mycursor.execute("use eCommerce;")
+# pusing to the database
+sql="INSERT INTO orders(user_id,product_id, orderedAt) VALUES(%s,%s, CURRENT_TIMESTAMP);"
+mycursor.execute(sql,val)
+mydb.commit()
+# mandatory to run this
+mycursor.close()
+  
 
 

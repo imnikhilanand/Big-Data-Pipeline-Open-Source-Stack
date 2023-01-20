@@ -1,4 +1,5 @@
 # importing the libraries
+from locale import currency
 import mysql.connector
 import time
 import random
@@ -10,35 +11,30 @@ mydb = mysql.connector.connect(
   passwd="delhi_110062"
 )
 
-# completing the orders (once they were ordered 30 mins ago. The reason being, we will get time to randomly view some order and generate order-view stream data)
-while(True):
-  mycursor = mydb.cursor(buffered=True)
-  mycursor.execute("use eCommerce;")
-  sql='''SELECT *
-         FROM orders 
-         WHERE status='0' AND  
-         TIMESTAMPDIFF(SECOND, orderedAt, CURRENT_TIMESTAMP)>1800 AND 
-         TIMESTAMPDIFF(SECOND, orderedAt, CURRENT_TIMESTAMP)<3600  ;
-      ''' 
+mycursor = mydb.cursor(buffered=True)
+mycursor.execute("use eCommerce;")
+sql='''SELECT order_id
+       FROM orders 
+       WHERE order_id not in (SELECT order_id from completed_orders);
+    ''' 
 
-      
-  mycursor.execute(sql)
-  myresult = mycursor.fetchall()
-  i=len(myresult)
-  print(i)
-  print(myresult[i-1])
+mycursor.execute(sql)
+myresult = mycursor.fetchall()
+i=len(myresult)
 
-  while i>0:
-    myresult=[list(ele) for ele in myresult]
-    myresult[i-1][4]='1'
-    myresult=[tuple(ele) for ele in myresult]
-    print(myresult[i-1])
-    update_sql="INSERT into completed_orders values(%s,%s,%s,%s,%s) ;"
-    mycursor.execute(update_sql,myresult[i-1])
-    mydb.commit()
-    i-=1
-    time.sleep(5)
-  time.sleep(300)
+myresult_arr = [ele[0] for ele in myresult]
+len(myresult_arr)
+
+while i>0:
+  curr_order_id_choice = random.choice(myresult_arr)
+  print(curr_order_id_choice)
+  myresult_arr.remove(curr_order_id_choice)
+  update_sql="INSERT into completed_orders(order_id, completedAt) values(%s, CURRENT_TIMESTAMP) ;"
+  val = (str(curr_order_id_choice),)
+  mycursor.execute(update_sql,val)
+  mydb.commit()
+  i-=1
+  time.sleep(5)
   
 mycursor.close()
 
