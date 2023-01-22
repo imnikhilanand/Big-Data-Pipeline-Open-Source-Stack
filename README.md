@@ -16,7 +16,7 @@ The API for this project consists of both REST APIs and Streaming APIs. The rest
 ### Database setup instructions:
 
 1. Run MySQL on terminal using the command "mysql -u ```<your-username>``` -p". When prompted, enter the password.
-2. Create a database named "eCommerce". 
+2. Create a database named ```eCommerce```. 
 3. In eCommerce database create tables: 
     
     ```
@@ -52,33 +52,138 @@ The API for this project consists of both REST APIs and Streaming APIs. The rest
 
 ### Running the APIs:
 
-To produce orders data we have run the following files:
+1. To produce orders data we have run the following files:
 
-```
-python3 src/api/rest_api.py
-python3 src/api/create_orders.py
-python3 src/api/updated_orders.py
-```
+    ```
+    python3 src/api/rest_api.py
+    python3 src/api/create_orders.py
+    python3 src/api/updated_orders.py
+    ```
 
-To produce streaming data we have run the following file:
+2. To produce streaming data we have run the following file:
 
-```
-python3 src/stream/stream_producer.py
-```
-
+    ```
+    python3 src/stream/stream_producer.py
+    ```
 
 ## Streaming Data
 
-### Kafka Setup Instructions:
+### Kafka and Cassandra Setup Instructions:
 
-- Create topics for click-stream data: productview and orderview
-```
+1. Create topics for click-stream data: productview and orderview
+
+    ```
     bin/kafka-topics.sh --create --topic productview --bootstrap-server localhost:9092 --replication-factor 1 --partitions 4	
     bin/kafka-topics.sh --create --topic orderview --bootstrap-server localhost:9092 --replication-factor 1 --partitions 4	
-```
+    ```
+
+2. Create Keyspace ecommerce and Column families product_view and order_view
+
+    ```
+    CREATE KEYSPACE eCommerce WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+    CREATE TABLE product_view(product_id TEXT, view_count INT, create_at TIMESTAMP);
+    CREATE TABLE order_view(order_id TEXT, create_at TIMESTAMP);
+    ```
 
 ### Processing Streaming Data:
 
+To process the product views data, open a separate terminal and follow the below instructions:
+
+1. Open a spark shell with following jar files:
+
+    ```
+    bin/spark-shell --packages "com.datastax.spark:spark-cassandra-connector_2.12:3.0.0","org.apache.spark:spark-streaming-kafka-0-10_2.12:3.2.1"
+    ```
+
+2. Once the spark shell opens up run the following commands:
+
+    ```
+    import org.apache.spark.streaming._
+    import org.apache.spark.SparkContext
+    import com.datastax.spark.connector.SomeColumns
+    import com.datastax.spark.connector.cql.CassandraConnector
+    import com.datastax.spark.connector.streaming._
+    import org.apache.spark.streaming.kafka010._
+    import org.apache.kafka.common.serialization.StringDeserializer
+    import org.apache.kafka.common.TopicPartition
+    import java.time
+
+    val sc = SparkContext.getOrCreate
+
+    val ssc = new StreamingContext(sc, Seconds(10))
+
+    val preferredHosts = LocationStrategies.PreferConsistent
+
+    val topics = List("productview")
+
+    val kafkaParams = Map(
+    "bootstrap.servers" -> "localhost:9092",
+    "key.deserializer" -> classOf[StringDeserializer],
+    "value.deserializer" -> classOf[StringDeserializer],
+    "group.id" -> "spark-streaming-notes",
+    "auto.offset.reset" -> "earliest"
+    )
+
+    val offsets = Map(new TopicPartition("productview", 0) -> 2L)
+
+    val dstream = KafkaUtils.createDirectStream[String, String](
+    ssc,
+    preferredHosts,
+    ConsumerStrategies.Subscribe[String, String](topics, kafkaParams, offsets))
+
+    dstream.map(record=>(record.value().toString.split(",")(1).toString.substring(0,record.value().toString.split(",")(1).toString.length()-1),1)).reduceByKey( _ + _ ).map{case (k,v) => (k,v); (k,v,time.LocalDateTime.now().toString)}.saveToCassandra("ecommerce", "product_view", SomeColumns("product_id","view_count","created_at"))
+
+    ssc.start
+    ```
+
+To process the order views data, open a separate terminal and follow the below instructions:
+
+1. Open a spark shell with following jar files:
+
+    ```
+    bin/spark-shell --packages "com.datastax.spark:spark-cassandra-connector_2.12:3.0.0","org.apache.spark:spark-streaming-kafka-0-10_2.12:3.2.1"
+    ```
+
+2. Once the spark shell opens up run the following commands:
+
+    ```
+    import org.apache.spark.streaming._
+    import org.apache.spark.SparkContext
+    import com.datastax.spark.connector.SomeColumns
+    import com.datastax.spark.connector.cql.CassandraConnector
+    import com.datastax.spark.connector.streaming._
+    import org.apache.spark.streaming.kafka010._
+    import org.apache.kafka.common.serialization.StringDeserializer
+    import org.apache.kafka.common.TopicPartition
+    import java.time
+
+    val sc = SparkContext.getOrCreate
+
+    val ssc = new StreamingContext(sc, Seconds(10))
+
+    val preferredHosts = LocationStrategies.PreferConsistent
+
+    val topics = List("orderview")
+
+    val kafkaParams = Map(
+    "bootstrap.servers" -> "localhost:9092",
+    "key.deserializer" -> classOf[StringDeserializer],
+    "value.deserializer" -> classOf[StringDeserializer],
+    "group.id" -> "spark-streaming-notes",
+    "auto.offset.reset" -> "earliest"
+    )
+
+    val offsets = Map(new TopicPartition("orderview", 0) -> 2L)
+
+    val dstream = KafkaUtils.createDirectStream[String, String](
+    ssc,
+    preferredHosts,
+    ConsumerStrategies.Subscribe[String, String](topics, kafkaParams, offsets))
+
+    dstream.map(record=>(record.value().toString.split(",")(1).toString.substring(0,record.value().toString.split(",")(1).toString.length()-1))).map(line => {val order_id = line.toString; (order_id, time.LocalDateTime.now().toString)}).saveToCassandra("ecommerce", "order_view", SomeColumns("order_id","created_at"))
+
+    ssc.start
+    ```
 
 ## Batch Data
 
