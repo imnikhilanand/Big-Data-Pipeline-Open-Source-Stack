@@ -195,20 +195,71 @@ To process the order views data, open a separate terminal and follow the below i
 
 3. For both ```orders``` and ```completed_orders``` table <b>Sync mode</b> should be <b>Incremental | Append</b>.
 
+### Setup Data Lake and Warehouse
+
+1. Create Data Lake and Warehouse in Hadoop HDFS.
+
+    ```
+    hdfs dfs -mkdir /ecomm_data/data_lake/orders
+
+    hdfs dfs -mkdir /ecomm_data/data_lake/completed_orders
+
+    hdfs dfs -mkdir /ecomm_data/data_warehouse/orders
+
+    hdfs dfs -mkdir /ecomm_data/data_warehouse/completed_orders
+    ```
+2. Create database and table in Hive.
+
+    ```
+    CREATE EXTERNAL TABLE IF NOT EXISTS orders(
+        order_id STRING, 
+        user_id STRING, 
+        product_id STRING,    
+        ordered_at STRING)
+        ROW FORMAT DELIMITED
+        FIELDS TERMINATED BY ','
+        STORED AS TEXTFILE
+        LOCATION '/ecomm_data/data_warehouse/orders';
+
+    CREATE EXTERNAL TABLE IF NOT EXISTS completed_orders(
+        order_id STRING, 
+        user_id STRING, 
+        product_id STRING,    
+        ordered_at STRING)
+        ROW FORMAT DELIMITED
+        FIELDS TERMINATED BY ','
+        STORED AS TEXTFILE
+        LOCATION '/ecomm_data/data_warehouse/completed_orders';    
+    ```
+
 ### Processing Batch Data:
 
+The batch data is incrementally pushed as as CSV file into a local temporary storage. To push the incremental batch data to the distributed data lake, a python script runs set of shell commands to move data from local distirbute lake. Once the data is added to the lake a PySpark script extracts the raw data from the data lake and process it to get the relevant attributes from the data and store it in Data Warehouse. A Hive table is build on the top of Data Warehouse, so that business use cases can be processed on top of it. The architecture is shown below.
+
 <p align="center">
-	<img src="img/batch_pipeline.jpg" width='100%'>
+	<img src="img/batch pipeline.jpg" width='100%'>
 </p>
 
 
-## Data Lake and Warehouse
+To run the Batch Processing pipeline, we will be runnning all the scripts using Cron at certain interval of time. Follow the following steps:
 
-### Setup Data Lake and Warehouse
+1. Open cron in Ubunutu.
 
+    ```
+    crontab -e
+    ```
+2. Update cron file using nano editor.
 
-### Load data from Daata Lake to Warehouse
+    ```
+    */5 * * * * /usr/bin/python3 /<your-path>/Big-Data-Pipeline-Open-Source-Stack/src/batch/batch_ingestion/batch_extraction.py && /usr/bin/python3 /<your-path>/Big-Data-Pipeline-Open-Source-Stack/src/batch/batch_ingestion/batch_ingestion.py && /usr/bin/python3 /<your-path>/Big-Data-Pipeline-Open-Source-Stack/src/batch/batch_processing/order_cleaning.py
+    ```
+3. Run Hive to view the oders and completed orders
 
+    ```
+    SELECT * FROM orders LIMIT 5;
+
+    SELECT * FROM completed_orders LIMIT 5;
+    ```
 
 ## Dashboard
 
