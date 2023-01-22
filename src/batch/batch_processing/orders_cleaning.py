@@ -13,6 +13,8 @@ from pyspark.sql.window import Window
 # calling spark session
 spark = SparkSession.builder.master("local").appName("hdfs_test").getOrCreate()
 
+''' ORDERS COMPLETED CODE '''
+
 # importing all the files from the data lake  
 orders_completed_data=spark.read.text("hdfs://localhost:9000/ecomm_data/data_lake/completed_orders")
 
@@ -28,11 +30,10 @@ orders_completed = orders_completed.select(orders_completed.order_id, orders_com
 # further removing the unwanted string from the columns
 orders_completed = orders_completed.withColumn('order_id', split(orders_completed['order_id'], ':').getItem(1)).withColumn('completed_at', split(orders_completed['completed_at'], '""').getItem(3))
 
-# just for showing purpose
-orders_completed.show(truncate=False)
-
 # save the data to the warehouse
 orders_completed.repartition(5).write.mode('overwrite').option('header','true').csv('hdfs://localhost:9000/ecomm_data/data_warehouse/completed_orders')
+
+''' ORDER CREATED CODE '''
 
 # importing all the files from the data lake  
 orders_data=spark.read.text("hdfs://localhost:9000/ecomm_data/data_lake/orders")
