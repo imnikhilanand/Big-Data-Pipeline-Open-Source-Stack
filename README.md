@@ -5,9 +5,12 @@ This project demonstrates a scalebale big data pipeline developed using open sou
 
 The data source for the project is an API(imitatte Ecommerce website) that repeatedly produce orders and click-stream data. The real-time orders are stored in MySQL databases (OLTP) and extracted in batches to ingest in the Hadoop HDFS (OLAP), which is used as a Data Lake. Periodically raw data from the Data-Lake is extracted and transformed and laoded in Hive distributed Data Warehouse system to analyze large scale data. The streaming APIs produce distirbuted click-stream using Kafka which is processed in real-time using Apache Spark and stored in Cassandra Distributed Databases. Both batch and streaming data is visualized using open sources visualization tool Metabase.  
 
+<br>
 <p align="center">
-	<img src="img/data_pipeline.jpg" width='100%'>
+	<img src="img/data_pipeline.jpg" width='90%'>
+    <em>Image 1: Architecture of the Data Pipeline</em>
 </p>
+<br>
 
 ## API
 
@@ -236,9 +239,12 @@ To process the order views data, open a separate terminal and follow the below i
 
 The batch data is incrementally pushed as as CSV file into a local temporary storage. To push the incremental batch data to the distributed data lake, a python script runs set of shell commands to move data from local distirbute lake. Once the data is added to the lake a PySpark script extracts the raw data from the data lake and process it to get the relevant attributes from the data and store it in Data Warehouse. A Hive table is build on the top of Data Warehouse, so that business use cases can be processed on top of it. The architecture is shown below.
 
+<br>
 <p align="center">
-	<img src="img/batch pipeline.jpg" width='100%'>
+	<img src="img/batch pipeline.jpg" width='90%'>
+    <em>Image 2: Architecture of the Batch Data Processing</em>
 </p>
+<br>
 
 
 To run the Batch Processing pipeline, we will be runnning all the scripts using Cron at certain interval of time. Follow the following steps:
