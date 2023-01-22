@@ -10,7 +10,6 @@ The data source for the project is an API(imitatte Ecommerce website) that repea
 	<img src="img/data_pipeline.jpg" width='90%'><br><br>
     <em>Image 1: Architecture of the Data Pipeline</em>
 </p>
-<br>
 
 ## API
 
