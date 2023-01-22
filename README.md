@@ -7,7 +7,7 @@ The data source for the project is an API(imitatte Ecommerce website) that repea
 
 <br>
 <p align="center">
-	<img src="img/data_pipeline.jpg" width='90%'><br>
+	<img src="img/data_pipeline.jpg" width='90%'><br><br>
     <em>Image 1: Architecture of the Data Pipeline</em>
 </p>
 <br>
@@ -132,7 +132,7 @@ To process the product views data, open a separate terminal and follow the below
     val dstream = KafkaUtils.createDirectStream[String, String](
     ssc,
     preferredHosts,
-    ConsumerStrategies.Subscribe[String, String](topics, kafkaParams, offsets))
+    ConsumerStrategies.Subscribe[String, String](topics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, kafkaParams, offsets))
 
     dstream.map(record=>(record.value().toString.split(",")(1).toString.substring(0,record.value().toString.split(",")(1).toString.length()-1),1)).reduceByKey( _ + _ ).map{case (k,v) => (k,v); (k,v,time.LocalDateTime.now().toString)}.saveToCassandra("ecommerce", "product_view", SomeColumns("product_id","view_count","created_at"))
 
@@ -241,7 +241,7 @@ The batch data is incrementally pushed as as CSV file into a local temporary sto
 
 <br>
 <p align="center">
-	<img src="img/batch pipeline.jpg" width='90%'><br>
+	<img src="img/batch pipeline.jpg" width='90%'><br><br>
     <em>Image 2: Architecture of the Batch Data Processing</em>
 </p>
 <br>
