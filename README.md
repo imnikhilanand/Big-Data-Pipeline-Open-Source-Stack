@@ -7,7 +7,7 @@ The data source for the project is an API(imitatte Ecommerce website) that repea
 
 <br>
 <p align="center">
-	<img src="img/data_pipeline.jpg" width='90%'>
+	<img src="img/data_pipeline.jpg" width='90%'><br>
     <em>Image 1: Architecture of the Data Pipeline</em>
 </p>
 <br>
@@ -241,7 +241,7 @@ The batch data is incrementally pushed as as CSV file into a local temporary sto
 
 <br>
 <p align="center">
-	<img src="img/batch pipeline.jpg" width='90%'>
+	<img src="img/batch pipeline.jpg" width='90%'><br>
     <em>Image 2: Architecture of the Batch Data Processing</em>
 </p>
 <br>
