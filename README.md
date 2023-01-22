@@ -187,7 +187,19 @@ To process the order views data, open a separate terminal and follow the below i
 
 ## Batch Data
 
-### Setup Airbyte
+### Airbyte Setup Instructions:
+
+1. Download and Run Airbyte on the machine. Use the official documentation for the refernce - https://docs.airbyte.com/deploying-airbyte/local-deployment/
+
+2. Create a new connection with MySQL source and Local File (.csv format) as the destination.
+
+3. For both ```orders``` and ```completed_orders``` table <b>Sync mode</b> should be <b>Incremental | Append</b>.
+
+### Processing Batch Data:
+
+<p align="center">
+	<img src="img/batch_pipeline.jpg" width='100%'>
+</p>
 
 
 ## Data Lake and Warehouse
