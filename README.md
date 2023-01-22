@@ -3,6 +3,10 @@ This project demonstrates a scalebale big data pipeline developed using open sou
 
 ## Architecture
 
+<p align="center">
+	<img src="img/data_pipeline.jpg" width='80%'>
+</p>
+
 ## API
 
 ### Database setup instructions:
