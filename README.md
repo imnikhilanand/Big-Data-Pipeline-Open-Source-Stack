@@ -11,7 +11,7 @@ The data source for the project is an API(imitatte Ecommerce website) that repea
 
 ## API
 
-The API for this project consists of both REST APIs and Streaming APIs. 
+The API for this project consists of both REST APIs and Streaming APIs. The rest APIs produces random orders data and store them in the eCommerce database. ```orders``` table in the database has the orders data and ```completed_orders``` table has those orders that were completed. The Streaming APIs produces random data of those user who have viewed random products on the Ecommmerce website and those users who have checked the status of their orders which are not delivered.
 
 ### Database setup instructions:
 
@@ -50,9 +50,26 @@ The API for this project consists of both REST APIs and Streaming APIs.
     );
     ```
 
+### Running the APIs:
+
+To produce orders data we have run the following files:
+
+```
+python3 src/api/rest_api.py
+python3 src/api/create_orders.py
+python3 src/api/updated_orders.py
+```
+
+To produce streaming data we have run the following file:
+
+```
+python3 src/stream/stream_producer.py
+```
+
+
 ## Streaming Data
 
-### Kafka topics for producting Streaming data:
+### Kafka Setup Instructions:
 
 - Create topics for click-stream data: productview and orderview
 ```
@@ -60,9 +77,20 @@ The API for this project consists of both REST APIs and Streaming APIs.
     bin/kafka-topics.sh --create --topic orderview --bootstrap-server localhost:9092 --replication-factor 1 --partitions 4	
 ```
 
+### Processing Streaming Data:
+
+
 ## Batch Data
 
 ### Setup Airbyte
+
+
+## Data Lake and Warehouse
+
+### Setup Data Lake and Warehouse
+
+
+### Load data from Daata Lake to Warehouse
 
 
 ## Dashboard
